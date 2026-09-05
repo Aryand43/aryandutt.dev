@@ -1,17 +1,13 @@
 import type { Metadata } from "next";
-import { Award, GraduationCap, Languages as LanguagesIcon, ScrollText } from "lucide-react";
 
-import { PageHeader } from "@/components/page-header";
-import { Reveal } from "@/components/motion/reveal";
-import { Stagger, StaggerItem } from "@/components/motion/stagger";
-import { Section } from "@/components/section";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent } from "@/components/ui/card";
-import { education } from "@/lib/data/experience";
+import { PageIntro } from "@/components/page-intro";
+import { Reveal } from "@/components/reveal";
 import {
   certifications,
   honors,
   languages,
+  organizations,
+  recommendations,
   skillGroups,
   topSkills,
 } from "@/lib/data/profile";
@@ -19,185 +15,204 @@ import {
 export const metadata: Metadata = {
   title: "About",
   description:
-    "Aryan Dutt — Data Science & AI undergraduate at NTU Singapore, with research at the MIT Julia Lab and NTU CCDS.",
+    "Aryan Dutt, Data Science and AI undergraduate at NTU Singapore, with research at the MIT Julia Lab and NTU CCDS.",
 };
 
 export default function AboutPage() {
   return (
-    <div className="container">
-      <PageHeader
-        eyebrow="About"
-        title="I build systems where research and engineering meet."
-        description="I'm reading Data Science & Artificial Intelligence at NTU Singapore with a minor in Mathematics. My work sits between two poles: research that has to be correct, and systems that have to be fast."
+    <div className="mx-auto max-w-3xl px-6 pb-24">
+      <PageIntro
+        title="About"
+        description="I build systems where research and engineering meet: work that has to be correct, and work that has to be fast."
       />
 
-      <Section title="Background" eyebrow="Story">
-        <Reveal className="max-w-2xl space-y-5 text-pretty leading-relaxed text-muted-foreground">
+      <Reveal>
+        <section className="mt-12 max-w-xl space-y-5 text-pretty leading-[1.75] text-muted">
           <p>
-            The through-line in my work is scientific computing under real
-            constraints. At the MIT Julia Lab I worked with Dr. Chris Rackauckas
-            on scientific machine learning — the part of the field where
-            numerical solvers and learned models have to agree with each other.
-            At NTU CCDS I moved up the stack to LLM safety alignment, co-authoring
-            a paper with Prof. Anupam Chattopadhyay on how alignment holds up
-            under pressure.
+            I am reading Data Science and Artificial Intelligence at NTU
+            Singapore with a minor in Mathematics. The through line in my work is
+            scientific computing under real constraints.
           </p>
           <p>
-            Alongside the research, I&apos;ve shipped production software: anomaly
+            At the MIT Julia Lab I worked with Dr. Chris Rackauckas on scientific
+            machine learning, the part of the field where numerical solvers and
+            learned models have to agree with each other. At NTU CCDS I moved up
+            the stack to LLM safety alignment, co-authoring a paper with Prof.
+            Anupam Chattopadhyay on how alignment holds up under pressure.
+          </p>
+          <p>
+            Alongside the research I have shipped production software: anomaly
             detection over banking transactions at Tagit, bioreactor telemetry at
             BioMetallica, curriculum data pipelines at a YC F24 startup in London,
-            and low-latency data platform work at InterSystems.
+            and low latency data platform work at InterSystems.
           </p>
           <p>
-            Before university, I served two years of National Service with
+            Before university I served two years of National Service with
             Singapore&apos;s Ministry of Home Affairs in ProCom, working on
-            critical infrastructure protection — an environment that taught me
-            more about operational discipline than any codebase has.
+            critical infrastructure protection. It taught me more about
+            operational discipline than any codebase has.
           </p>
-        </Reveal>
-      </Section>
+        </section>
+      </Reveal>
 
-      <Section
-        title="Skills"
-        eyebrow="Toolkit"
-        description="What I reach for most, grouped by where it gets used."
-      >
-        <Reveal className="mb-8">
-          <p className="mb-3 font-mono text-xs uppercase tracking-[0.18em] text-muted-foreground">
-            Top skills
+      <Reveal>
+        <section className="mt-20 border-t border-line/80 pt-12">
+          <h2 className="font-mono text-xs tracking-widest text-subtle uppercase">
+            Skills
+          </h2>
+          <p className="mt-6 text-sm text-muted">
+            Top skills: {topSkills.join(", ")}.
           </p>
-          <div className="flex flex-wrap gap-2">
-            {topSkills.map((skill) => (
-              <Badge key={skill} className="px-3 py-1 text-sm">
-                {skill}
-              </Badge>
+          <dl className="mt-8 space-y-6">
+            {skillGroups.map((group) => (
+              <div
+                key={group.title}
+                className="flex flex-col gap-1 sm:flex-row sm:gap-8"
+              >
+                <dt className="w-48 shrink-0 text-sm font-medium">
+                  {group.title}
+                </dt>
+                <dd className="text-sm text-muted">{group.items.join(", ")}</dd>
+              </div>
             ))}
-          </div>
-        </Reveal>
+          </dl>
+        </section>
+      </Reveal>
 
-        <Stagger className="grid gap-4 sm:grid-cols-2">
-          {skillGroups.map((group) => (
-            <StaggerItem key={group.title}>
-              <Card className="h-full">
-                <CardContent className="p-6">
-                  <h3 className="text-sm font-semibold tracking-tight">
-                    {group.title}
-                  </h3>
-                  <div className="mt-4 flex flex-wrap gap-1.5">
-                    {group.items.map((item) => (
-                      <Badge
-                        key={item}
-                        variant="secondary"
-                        className="font-normal"
-                      >
-                        {item}
-                      </Badge>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-            </StaggerItem>
-          ))}
-        </Stagger>
-      </Section>
-
-      <Section title="Education" eyebrow="Study">
-        <Stagger as="ul" className="space-y-4">
-          {education.map((item) => (
-            <StaggerItem as="li" key={item.school}>
-              <Card>
-                <CardContent className="flex flex-col gap-2 p-6 sm:flex-row sm:items-start sm:justify-between">
-                  <div className="flex gap-4">
-                    <GraduationCap className="mt-0.5 size-5 shrink-0 text-primary" />
-                    <div>
-                      <p className="font-medium">{item.school}</p>
-                      <p className="mt-1 text-sm text-muted-foreground">
-                        {item.credential}
-                      </p>
-                      {item.detail ? (
-                        <p className="mt-1 text-sm text-muted-foreground">
-                          {item.detail}
-                        </p>
-                      ) : null}
-                    </div>
-                  </div>
-                  <p className="shrink-0 font-mono text-xs text-muted-foreground sm:pl-6">
-                    {item.period}
-                  </p>
-                </CardContent>
-              </Card>
-            </StaggerItem>
-          ))}
-        </Stagger>
-      </Section>
-
-      <Section title="Honors & certifications" eyebrow="Recognition">
-        <div className="grid gap-6 lg:grid-cols-2">
-          <Reveal>
-            <Card className="h-full">
-              <CardContent className="p-6">
-                <div className="flex items-center gap-2.5">
-                  <Award className="size-4 text-primary" />
-                  <h3 className="text-sm font-semibold tracking-tight">
-                    Honors &amp; awards
-                  </h3>
-                </div>
-                <ul className="mt-5 space-y-4">
-                  {honors.map((honor) => (
-                    <li key={honor.name}>
-                      <p className="text-sm font-medium">{honor.name}</p>
-                      <p className="mt-0.5 text-sm text-muted-foreground">
-                        {honor.detail}
-                      </p>
-                    </li>
-                  ))}
-                </ul>
-              </CardContent>
-            </Card>
-          </Reveal>
-
-          <Reveal delay={0.08}>
-            <Card className="h-full">
-              <CardContent className="p-6">
-                <div className="flex items-center gap-2.5">
-                  <ScrollText className="size-4 text-primary" />
-                  <h3 className="text-sm font-semibold tracking-tight">
-                    Certifications
-                  </h3>
-                </div>
-                <ul className="mt-5 space-y-4">
-                  {certifications.map((cert) => (
-                    <li key={cert.name}>
-                      <p className="text-sm font-medium">{cert.name}</p>
-                      <p className="mt-0.5 text-sm text-muted-foreground">
-                        {cert.issuer}
-                      </p>
-                    </li>
-                  ))}
-                </ul>
-              </CardContent>
-            </Card>
-          </Reveal>
-        </div>
-      </Section>
-
-      <Section title="Languages" eyebrow="Communication" className="pb-24">
-        <Reveal>
-          <Card>
-            <CardContent className="flex flex-wrap items-center gap-x-10 gap-y-4 p-6">
-              <LanguagesIcon className="size-4 text-primary" />
-              {languages.map((language) => (
-                <div key={language.name}>
-                  <p className="text-sm font-medium">{language.name}</p>
-                  <p className="mt-0.5 text-sm text-muted-foreground">
-                    {language.level}
+      <Reveal>
+        <section
+          id="honors"
+          className="mt-16 scroll-mt-24 border-t border-line/80 pt-12"
+        >
+          <h2 className="font-mono text-xs tracking-widest text-subtle uppercase">
+            Honors and awards
+          </h2>
+          <ul className="mt-8 divide-y divide-line/60">
+            {honors.map((honor) => (
+              <li key={honor.name} className="py-5">
+                <div className="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between sm:gap-6">
+                  <p className="text-sm font-medium">{honor.name}</p>
+                  <p className="shrink-0 font-mono text-xs text-subtle">
+                    {honor.date}
                   </p>
                 </div>
-              ))}
-            </CardContent>
-          </Card>
-        </Reveal>
-      </Section>
+                {honor.issuer ? (
+                  <p className="mt-1 text-sm text-muted">{honor.issuer}</p>
+                ) : null}
+                {honor.association ? (
+                  <p className="mt-0.5 text-sm text-subtle">
+                    {honor.association}
+                  </p>
+                ) : null}
+                {honor.detail ? (
+                  <p className="mt-2 text-pretty text-sm leading-relaxed text-subtle">
+                    {honor.detail}
+                  </p>
+                ) : null}
+              </li>
+            ))}
+          </ul>
+        </section>
+      </Reveal>
+
+      <Reveal>
+        <section
+          id="organizations"
+          className="mt-16 scroll-mt-24 border-t border-line/80 pt-12"
+        >
+          <h2 className="font-mono text-xs tracking-widest text-subtle uppercase">
+            Organizations
+          </h2>
+          <ul className="mt-8 divide-y divide-line/60">
+            {organizations.map((org) => (
+              <li key={org.name} className="py-5">
+                <div className="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between sm:gap-6">
+                  <p className="text-sm font-medium">{org.name}</p>
+                  <p className="shrink-0 font-mono text-xs text-subtle">
+                    {org.period}
+                  </p>
+                </div>
+                <p className="mt-1 text-sm text-muted">{org.role}</p>
+                <p className="mt-0.5 text-sm text-subtle">{org.association}</p>
+              </li>
+            ))}
+          </ul>
+        </section>
+      </Reveal>
+
+      <Reveal>
+        <section className="mt-16 border-t border-line/80 pt-12">
+          <h2 className="font-mono text-xs tracking-widest text-subtle uppercase">
+            Certifications
+          </h2>
+          <ul className="mt-8 divide-y divide-line/60">
+            {certifications.map((cert) => (
+              <li
+                key={cert.name}
+                className="flex flex-col gap-1 py-4 sm:flex-row sm:items-baseline sm:justify-between sm:gap-6"
+              >
+                <div>
+                  <p className="text-sm font-medium">{cert.name}</p>
+                  <p className="mt-0.5 text-sm text-muted">{cert.issuer}</p>
+                </div>
+                <p className="shrink-0 font-mono text-xs text-subtle">
+                  {cert.date}
+                </p>
+              </li>
+            ))}
+          </ul>
+        </section>
+      </Reveal>
+
+      <Reveal>
+        <section
+          id="recommendations"
+          className="mt-16 scroll-mt-24 border-t border-line/80 pt-12"
+        >
+          <h2 className="font-mono text-xs tracking-widest text-subtle uppercase">
+            Recommendations
+          </h2>
+          <ul className="mt-8 space-y-8">
+            {recommendations.map((rec) => (
+              <li key={rec.name}>
+                <figure>
+                  <blockquote className="border-l border-line pl-5 text-pretty text-sm leading-[1.75] text-muted">
+                    {rec.quote}
+                  </blockquote>
+                  <figcaption className="mt-3 pl-5">
+                    <span className="text-sm font-medium">{rec.name}</span>
+                    <span className="mt-0.5 block text-sm text-subtle">
+                      {rec.title}
+                    </span>
+                    <span className="mt-0.5 block font-mono text-xs text-subtle">
+                      {rec.relationship}, {rec.date}
+                    </span>
+                  </figcaption>
+                </figure>
+              </li>
+            ))}
+          </ul>
+        </section>
+      </Reveal>
+
+      <Reveal>
+        <section className="mt-16 border-t border-line/80 pt-12">
+          <h2 className="font-mono text-xs tracking-widest text-subtle uppercase">
+            Languages
+          </h2>
+          <ul className="mt-8 divide-y divide-line/60">
+            {languages.map((language) => (
+              <li
+                key={language.name}
+                className="flex items-baseline justify-between gap-6 py-4"
+              >
+                <p className="text-sm font-medium">{language.name}</p>
+                <p className="text-sm text-subtle">{language.level}</p>
+              </li>
+            ))}
+          </ul>
+        </section>
+      </Reveal>
     </div>
   );
 }

@@ -3,14 +3,15 @@ export type Experience = {
   company: string;
   role: string;
   period: string;
-  /** ISO month used for ordering; the display string lives in `period`. */
-  start: string;
-  end: string | null;
   location: string;
+  /** Employment type and work mode, as listed on the record. */
+  engagement: string;
   kind: "research" | "engineering" | "service";
   summary: string;
   highlights: string[];
   tags: string[];
+  /** Surfaced in the compact list on the home page. */
+  featured?: boolean;
 };
 
 /** Reverse chronological. */
@@ -20,15 +21,14 @@ export const experience: Experience[] = [
     company: "Nanyang Technological University",
     role: "Undergraduate Research Assistant",
     period: "Jul – Aug 2026",
-    start: "2026-07",
-    end: "2026-08",
     location: "Singapore",
+    engagement: "Part-time, on-site",
     kind: "research",
     summary:
-      "Research assistantship at the Singapore Centre for 3D Printing (SC3DP) under Prof. Paulo Bartolo.",
+      "Recalled to SC3DP as an Undergraduate Research Assistant with Prof. Paulo Bartolo.",
     highlights: [
-      "Continued SC3DP research on additive manufacturing process data under Prof. Paulo Bartolo.",
-      "Built analysis tooling around print-process experiments to shorten the loop between run and result.",
+      "Continued SC3DP research on additive manufacturing process data.",
+      "Built analysis tooling to shorten the loop between print run and result.",
     ],
     tags: ["Research", "SC3DP", "Additive Manufacturing", "Python"],
   },
@@ -37,63 +37,59 @@ export const experience: Experience[] = [
     company: "InterSystems",
     role: "Software Engineer Intern",
     period: "May – Jul 2026",
-    start: "2026-05",
-    end: "2026-07",
     location: "Singapore",
+    engagement: "Full-time, on-site",
     kind: "engineering",
-    summary:
-      "Worked on low-latency data platforms and real-time database internals.",
+    summary: "Low latency data platforms and real time database internals.",
     highlights: [
-      "Contributed to low-latency data platform work backing real-time database workloads.",
-      "Worked across the ObjectScript stack with CMake-driven builds and Ansible-managed environments.",
+      "Contributed to low latency platform work backing real time database workloads.",
+      "Worked across the ObjectScript stack with CMake builds and Ansible managed environments.",
     ],
-    tags: ["ObjectScript", "CMake", "Ansible", "Databases", "Low Latency"],
+    tags: ["ObjectScript", "CMake", "Ansible", "Databases"],
+    featured: true,
   },
   {
     slug: "ntu-ccds",
     company: "NTU CCDS",
     role: "Research Intern",
     period: "Aug 2025 – May 2026",
-    start: "2025-08",
-    end: "2026-05",
     location: "Singapore",
+    engagement: "Part-time, on-site",
     kind: "research",
     summary:
       "LLM safety alignment research with Prof. Anupam Chattopadhyay at the College of Computing and Data Science.",
     highlights: [
-      "Co-authored a paper on LLM safety alignment with Prof. Anupam Chattopadhyay.",
+      "Co-authored a paper on LLM safety alignment.",
       "Ran evaluation harnesses over alignment interventions and analysed failure modes across prompt families.",
     ],
-    tags: ["LLM Safety", "Alignment", "Evaluation", "PyTorch", "Research"],
+    tags: ["LLM Safety", "Alignment", "Evaluation", "PyTorch"],
+    featured: true,
   },
   {
     slug: "mit-julia-lab",
     company: "MIT Julia Lab",
     role: "Research Intern",
     period: "Jul 2025 – Mar 2026",
-    start: "2025-07",
-    end: "2026-03",
-    location: "Remote / Cambridge, MA",
+    location: "Remote and Cambridge, MA",
+    engagement: "Part-time, remote",
     kind: "research",
-    summary:
-      "Scientific machine learning research under PI Dr. Chris Rackauckas.",
+    summary: "Scientific machine learning research under PI Dr. Chris Rackauckas.",
     highlights: [
       "Research intern in the Julia Lab under PI Dr. Chris Rackauckas.",
       "Worked in the scientific machine learning ecosystem around differential equation solvers and Julia numerics.",
     ],
-    tags: ["Julia", "SciML", "Differential Equations", "Numerics", "Research"],
+    tags: ["Julia", "SciML", "Differential Equations", "Numerics"],
+    featured: true,
   },
   {
     slug: "ntu-sc3dp",
     company: "NTU SC3DP",
     role: "Research Intern",
     period: "Jan – Jul 2025",
-    start: "2025-01",
-    end: "2025-07",
     location: "Singapore",
+    engagement: "Part-time, hybrid",
     kind: "research",
-    summary:
-      "Singapore Centre for 3D Printing, under Prof. Paulo Bartolo.",
+    summary: "Singapore Centre for 3D Printing, under Prof. Paulo Bartolo.",
     highlights: [
       "Supported additive manufacturing research under Prof. Paulo Bartolo.",
       "Handled experimental data capture and analysis across print runs.",
@@ -102,95 +98,85 @@ export const experience: Experience[] = [
   },
   {
     slug: "seaqr-seaswarm",
-    company: "SEAQR / SeaSwarm",
+    company: "SEAQR and SeaSwarm",
     role: "Software Engineer",
     period: "Mar – May 2025",
-    start: "2025-03",
-    end: "2025-05",
     location: "Singapore",
+    engagement: "Internship, remote",
     kind: "engineering",
     summary:
-      "Robotics startup founded by Harvard alumni, building autonomous marine sensing platforms.",
+      "SEAQR, now SeaSwarm, is a robotics startup founded by Harvard University researchers building autonomous marine sensing and monitoring systems.",
     highlights: [
-      "Built software for autonomous marine sensing at a Harvard-founded robotics startup.",
+      "Built software for autonomous marine sensing.",
       "Worked on the data path between fleet hardware and the analysis tooling consuming it.",
     ],
-    tags: ["Robotics", "Autonomy", "Marine Sensing", "Python", "Startup"],
+    tags: ["Robotics", "Autonomy", "Marine Sensing", "Python"],
   },
   {
     slug: "tagit",
     company: "Tagit",
     role: "Software Engineer",
     period: "Jan – Mar 2025",
-    start: "2025-01",
-    end: "2025-03",
     location: "Singapore",
+    engagement: "Internship, on-site",
     kind: "engineering",
-    summary:
-      "Transaction anomaly detection for digital banking products.",
+    summary: "Transaction anomaly detection for digital banking products.",
     highlights: [
-      "Built transaction anomaly detection for digital banking flows.",
-      "Modelled outlier behaviour with Isolation Forest over engineered transaction features.",
-      "Shipped a Streamlit dashboard so analysts could triage flagged transactions directly.",
+      "Architected a modular transaction anomaly detection system for digital banking workloads.",
+      "Implemented per user Isolation Forest modelling and percentile based spike detection.",
+      "Engineered rolling 7 day and 30 day behavioural features, merchant spend ratios, and temporal risk signals.",
+      "Built a production ready Streamlit monitoring dashboard with exportable analytics and audit summaries.",
     ],
-    tags: [
-      "Anomaly Detection",
-      "Isolation Forest",
-      "scikit-learn",
-      "Streamlit",
-      "FinTech",
-    ],
+    tags: ["Anomaly Detection", "Isolation Forest", "scikit-learn", "Streamlit"],
+    featured: true,
   },
   {
     slug: "biometallica",
     company: "BioMetallica",
     role: "Software Engineer",
     period: "Oct – Dec 2024",
-    start: "2024-10",
-    end: "2024-12",
     location: "Singapore",
+    engagement: "Internship, on-site",
     kind: "engineering",
-    summary:
-      "Bioreactor telemetry and internal operations tooling for a biotech venture.",
+    summary: "Bioreactor telemetry and internal operations tooling for a biotech venture.",
     highlights: [
-      "Instrumented bioreactor telemetry on Arduino Cloud for live process monitoring.",
-      "Built the Digital Board surfacing reactor state to the team at a glance.",
-      "Set up an Integrated Management System to consolidate operational records.",
+      "Architected Arduino Cloud bioreactor telemetry with real time control integration.",
+      "Built the internal Digital Board system for workflow coordination and data visibility.",
+      "Developed Integrated Management System infrastructure for scalable inventory optimisation.",
+      "Delivered production grade systems architecture for industrial bioprocess monitoring.",
     ],
-    tags: ["IoT", "Arduino Cloud", "Telemetry", "Biotech", "Dashboards"],
+    tags: ["IoT", "Arduino Cloud", "Telemetry", "Dashboards"],
   },
   {
     slug: "general-learning",
     company: "General Learning (YC F24)",
     role: "Intern",
     period: "Aug – Oct 2024",
-    start: "2024-08",
-    end: "2024-10",
     location: "London, UK",
+    engagement: "Part-time, remote",
     kind: "engineering",
-    summary:
-      "Curriculum data infrastructure at a Y Combinator F24 education startup.",
+    summary: "Curriculum data infrastructure at a Y Combinator F24 education startup.",
     highlights: [
-      "Wrote Node.js scrapers with Axios and Cheerio to collect A-Level and GMAT curriculum data.",
-      "Built taxonomy pipelines to normalise scraped syllabi into a consistent topic hierarchy.",
-      "Enriched CSV datasets with the OpenAI API to fill gaps across curriculum records.",
+      "Built Node.js scraping infrastructure with Axios and Cheerio, structuring A Level and GMAT curricula into production ready JSON.",
+      "Designed slug generation and taxonomy pipelines for automated curriculum normalisation at scale.",
+      "Automated syllabus ingestion workflows and CSV enrichment using the OpenAI API.",
+      "Delivered structured data powering early stage backend operations prior to YC backing.",
     ],
-    tags: ["Node.js", "Axios", "Cheerio", "Data Pipelines", "OpenAI API", "YC"],
+    tags: ["Node.js", "Data Pipelines", "OpenAI API", "YC"],
   },
   {
     slug: "mha-singapore",
     company: "Ministry of Home Affairs, Singapore",
-    role: "National Service — ProCom",
+    role: "National Service, ProCom",
     period: "Nov 2022 – Oct 2024",
-    start: "2022-11",
-    end: "2024-10",
     location: "Singapore",
+    engagement: "Full-time, on-site",
     kind: "service",
     summary:
       "Two years of National Service in ProCom, on critical infrastructure protection.",
     highlights: [
-      "Served in ProCom on critical infrastructure protection duties.",
-      "Operated in a high-accountability environment with strict operational discipline.",
+      "Served under the Protective Security Command (ProCom).",
+      "Supported high readiness security and critical infrastructure protection.",
     ],
     tags: ["National Service", "Critical Infrastructure", "Operations"],
   },
@@ -200,19 +186,34 @@ export type Education = {
   school: string;
   credential: string;
   detail?: string;
+  coursework?: string[];
   period: string;
 };
 
 export const education: Education[] = [
   {
     school: "Nanyang Technological University",
-    credential: "Bachelor of Computing (Honours), Data Science & Artificial Intelligence",
-    detail: "Minor in Mathematics",
+    credential:
+      "Bachelor of Computing (Honours), Data Science and Artificial Intelligence",
+    detail: "Minor in Mathematics. Accelerated Bachelors Programme.",
+    coursework: [
+      "Data Structures and Algorithms",
+      "Linear Algebra",
+      "Probability and Statistics",
+      "Computer Organisation and Architecture",
+      "Discrete Mathematics",
+      "Object-Oriented Programming",
+      "Digital Logic",
+      "Artificial Intelligence",
+      "Operating Systems",
+      "Computer Networks",
+      "Software Engineering",
+    ],
     period: "2025 – 2028",
   },
   {
     school: "International Baccalaureate",
     credential: "IB Diploma",
-    period: "2020 – 2022",
+    period: "Aug 2020 – May 2022",
   },
 ];

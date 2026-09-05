@@ -1,123 +1,124 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
-@layer base {
-  /* Light theme: kept intentionally quiet — the site is designed dark-first. */
-  :root {
-    --background: 40 20% 98%;
-    --foreground: 222 22% 11%;
+/* ---------------------------------------------------------------
+   Design tokens. Monochrome greyscale plus a single accent that is
+   reserved for links, focus rings, and the active nav marker.
+   --------------------------------------------------------------- */
+@theme {
+  --color-background: oklch(0.16 0.004 260);
+  --color-surface: oklch(0.19 0.005 260);
+  --color-foreground: oklch(0.97 0.002 260);
+  --color-muted: oklch(0.72 0.008 260);
+  --color-subtle: oklch(0.56 0.008 260);
+  --color-line: oklch(0.28 0.006 260);
+  --color-accent: oklch(0.82 0.11 220);
 
-    --card: 0 0% 100%;
-    --card-foreground: 222 22% 11%;
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, monospace;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222 22% 11%;
+  /* Fluid type: scales with the viewport, no breakpoint jumps. */
+  --text-display: clamp(2.5rem, 1.6rem + 4.2vw, 5rem);
+  --text-display--line-height: 0.98;
+  --text-display--letter-spacing: -0.035em;
 
-    --primary: 176 62% 32%;
-    --primary-foreground: 0 0% 100%;
+  --text-title: clamp(1.75rem, 1.3rem + 1.9vw, 2.5rem);
+  --text-title--line-height: 1.1;
+  --text-title--letter-spacing: -0.025em;
 
-    --secondary: 220 14% 94%;
-    --secondary-foreground: 222 22% 16%;
+  --text-lead: clamp(1.0625rem, 1rem + 0.35vw, 1.25rem);
+  --text-lead--line-height: 1.6;
 
-    --muted: 220 14% 94%;
-    --muted-foreground: 220 9% 42%;
+  --radius-lg: 0.625rem;
 
-    --accent: 176 50% 92%;
-    --accent-foreground: 176 62% 22%;
-
-    --destructive: 0 72% 45%;
-    --destructive-foreground: 0 0% 100%;
-
-    --border: 220 13% 88%;
-    --input: 220 13% 88%;
-    --ring: 176 62% 38%;
-
-    --radius: 0.75rem;
-  }
-
-  .dark {
-    --background: 224 22% 5%;
-    --foreground: 210 20% 96%;
-
-    --card: 224 20% 7%;
-    --card-foreground: 210 20% 96%;
-
-    --popover: 224 22% 6%;
-    --popover-foreground: 210 20% 96%;
-
-    --primary: 172 70% 55%;
-    --primary-foreground: 224 30% 6%;
-
-    --secondary: 223 16% 13%;
-    --secondary-foreground: 210 20% 92%;
-
-    --muted: 223 16% 13%;
-    --muted-foreground: 218 12% 62%;
-
-    --accent: 223 18% 15%;
-    --accent-foreground: 172 70% 70%;
-
-    --destructive: 0 62% 52%;
-    --destructive-foreground: 210 20% 96%;
-
-    --border: 220 14% 16%;
-    --input: 220 14% 18%;
-    --ring: 172 70% 45%;
-  }
+  --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 @layer base {
+  :root {
+    color-scheme: dark;
+  }
+
   * {
-    @apply border-border;
+    border-color: var(--color-line);
   }
 
   html {
-    scroll-behavior: smooth;
-    -webkit-tap-highlight-color: transparent;
+    -webkit-text-size-adjust: 100%;
   }
 
   body {
-    @apply bg-background text-foreground antialiased;
-    font-feature-settings: "rlig" 1, "calt" 1;
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
   }
 
   ::selection {
-    @apply bg-primary/25 text-foreground;
+    background-color: color-mix(in oklch, var(--color-accent) 28%, transparent);
   }
 
+  /* One visible, consistent focus treatment across the whole site. */
   :focus-visible {
-    @apply outline-none ring-2 ring-ring ring-offset-2 ring-offset-background;
+    outline: 2px solid var(--color-accent);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation-duration: 0.22s;
+    animation-timing-function: var(--ease-out-quint);
   }
 }
 
-@layer utilities {
-  /* Faint dot grid used behind the hero. */
-  .bg-dot-grid {
-    background-image: radial-gradient(
-      circle at 1px 1px,
-      hsl(var(--foreground) / 0.11) 1px,
-      transparent 0
-    );
-    background-size: 24px 24px;
-  }
+@utility text-balance {
+  text-wrap: balance;
+}
 
-  .text-balance {
-    text-wrap: balance;
-  }
+@utility text-pretty {
+  text-wrap: pretty;
+}
 
-  .text-pretty {
-    text-wrap: pretty;
+/* ---------------------------------------------------------------
+   Entrance animation. Pure CSS so above-the-fold content costs no
+   client JS: elements animate on paint, not on hydration.
+   --------------------------------------------------------------- */
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
   }
 }
 
-/* Respect users who ask the OS to tone motion down. */
+@utility animate-rise {
+  animation: rise 0.6s var(--ease-out-quint) both;
+}
+
+/*
+ * Scroll entrance, driven entirely by CSS scroll-driven animations so no
+ * client JS is involved. Unsupported browsers render the content as normal,
+ * which is the correct fallback: visible beats animated.
+ */
+.reveal {
+  transform-origin: center top;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    .reveal {
+      animation: rise linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 45%;
+    }
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
-  }
-
   *,
   *::before,
   *::after {
@@ -125,30 +126,46 @@
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
+
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none !important;
+  }
 }
 
-/* rehype-pretty-code output */
+/* rehype-pretty-code output, highlighted at build time by Shiki. */
 [data-rehype-pretty-code-figure] pre {
-  @apply overflow-x-auto rounded-lg border border-border bg-secondary/40 py-4 text-[0.85rem] leading-relaxed;
+  overflow-x: auto;
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-lg);
+  background-color: var(--color-surface);
+  padding-block: 1rem;
+  font-size: 0.8125rem;
+  line-height: 1.7;
 }
 
 [data-rehype-pretty-code-figure] code {
-  @apply grid border-none bg-transparent p-0;
-  counter-reset: line;
+  display: grid;
+  background: transparent;
+  border: none;
+  padding: 0;
 }
 
 [data-rehype-pretty-code-figure] code > [data-line] {
-  @apply border-l-2 border-transparent px-4 py-0.5;
-}
-
-[data-rehype-pretty-code-figure] [data-highlighted-line] {
-  @apply border-primary/60 bg-primary/10;
+  padding-inline: 1.125rem;
 }
 
 [data-rehype-pretty-code-title] {
-  @apply mb-0 rounded-t-lg border border-b-0 border-border bg-secondary/60 px-4 py-2 font-mono text-xs text-muted-foreground;
+  border: 1px solid var(--color-line);
+  border-bottom: none;
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  background-color: var(--color-surface);
+  padding: 0.5rem 1.125rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--color-muted);
 }
 
 [data-rehype-pretty-code-title] + pre {
-  @apply mt-0 rounded-t-none;
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
 }

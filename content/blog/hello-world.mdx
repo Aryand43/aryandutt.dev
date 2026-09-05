@@ -42,13 +42,13 @@ sol  = solve(prob, Rodas5P(), abstol = 1e-8, reltol = 1e-8)
 ```
 
 Swap `Rodas5P()` for a non-stiff explicit method and it doesn't quietly get
-worse — it stops being usable. That failure mode is a gift. You cannot ship a
+worse, it stops being usable. That failure mode is a gift. You cannot ship a
 result you don't understand, because the solver won't let you.
 
 ## Alignment research has the opposite problem
 
 LLM safety work is where I noticed the contrast most sharply. A misaligned model
-does not throw. It answers fluently, confidently, and wrongly — and the fluency
+does not throw. It answers fluently, confidently, and wrongly, and the fluency
 is precisely what makes the failure hard to catch.
 
 So the work becomes evaluation design. Some things I came away believing:
@@ -60,8 +60,8 @@ So the work becomes evaluation design. Some things I came away believing:
 - **A benchmark you cannot regenerate is a benchmark you cannot trust.** If the
   harness isn't reproducible, neither is the claim.
 
-None of that is exotic. It's the numerical analyst's instinct — quantify the
-error, don't just report the mean — pointed at a system that doesn't come with
+None of that is exotic. It is the numerical analyst's instinct, quantify the
+error rather than just reporting the mean, pointed at a system that does not come with
 error bars built in.
 
 ## Latency is the same discipline with a stopwatch

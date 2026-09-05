@@ -1,17 +1,14 @@
-import { clsx, type ClassValue } from "clsx";
-import { twMerge } from "tailwind-merge";
+type ClassValue = string | false | null | undefined;
 
-export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs));
+export function cn(...classes: ClassValue[]): string {
+  return classes.filter(Boolean).join(" ");
 }
 
-export function formatDate(input: string | Date): string {
-  const date = typeof input === "string" ? new Date(input) : input;
-
+export function formatDate(input: string): string {
   return new Intl.DateTimeFormat("en-SG", {
     year: "numeric",
     month: "long",
     day: "numeric",
     timeZone: "UTC",
-  }).format(date);
+  }).format(new Date(input));
 }

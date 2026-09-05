@@ -2,79 +2,71 @@ import fs from "node:fs";
 import path from "node:path";
 
 import matter from "gray-matter";
+import { z } from "zod";
 
 const BLOG_DIR = path.join(process.cwd(), "content", "blog");
 
-export type PostFrontmatter = {
-  title: string;
-  description: string;
-  date: string;
-  tags: string[];
-  draft: boolean;
-};
+/**
+ * Frontmatter is validated at build time. A malformed post fails the build
+ * with the offending file named, rather than rendering as "Untitled".
+ */
+const frontmatterSchema = z.object({
+  title: z.string().min(1),
+  description: z.string().min(1),
+  date: z.iso.date(),
+  tags: z.array(z.string()).default([]),
+  draft: z.boolean().default(false),
+});
 
-export type Post = PostFrontmatter & {
+export type Frontmatter = z.infer<typeof frontmatterSchema>;
+
+export type Post = Frontmatter & {
   slug: string;
   content: string;
   readingTime: number;
 };
 
-function parseFrontmatter(data: Record<string, unknown>): PostFrontmatter {
-  const title = typeof data.title === "string" ? data.title : "Untitled";
-  const description =
-    typeof data.description === "string" ? data.description : "";
-  const date =
-    typeof data.date === "string"
-      ? data.date
-      : data.date instanceof Date
-        ? data.date.toISOString().slice(0, 10)
-        : new Date().toISOString().slice(0, 10);
-  const tags = Array.isArray(data.tags)
-    ? data.tags.filter((tag): tag is string => typeof tag === "string")
-    : [];
-
-  return { title, description, date, tags, draft: data.draft === true };
-}
-
-/** ~200 wpm, rounded up, minimum one minute. */
+/** Roughly 200 words per minute, rounded up, floor of one minute. */
 function estimateReadingTime(content: string): number {
   const words = content.trim().split(/\s+/u).filter(Boolean).length;
   return Math.max(1, Math.ceil(words / 200));
 }
 
+function readPost(file: string): Post {
+  const slug = file.replace(/\.mdx$/u, "");
+  const raw = fs.readFileSync(path.join(BLOG_DIR, file), "utf8");
+  const { data, content } = matter(raw);
+
+  const parsed = frontmatterSchema.safeParse({
+    ...data,
+    date: data.date instanceof Date ? data.date.toISOString().slice(0, 10) : data.date,
+  });
+
+  if (!parsed.success) {
+    throw new Error(
+      `Invalid frontmatter in content/blog/${file}:\n${z.prettifyError(parsed.error)}`,
+    );
+  }
+
+  return {
+    ...parsed.data,
+    slug,
+    content,
+    readingTime: estimateReadingTime(content),
+  };
+}
+
 export function getAllPosts(): Post[] {
   if (!fs.existsSync(BLOG_DIR)) return [];
 
-  const posts = fs
+  return fs
     .readdirSync(BLOG_DIR)
     .filter((file) => file.endsWith(".mdx"))
-    .map((file) => {
-      const slug = file.replace(/\.mdx$/u, "");
-      const raw = fs.readFileSync(path.join(BLOG_DIR, file), "utf8");
-      const { data, content } = matter(raw);
-
-      return {
-        ...parseFrontmatter(data),
-        slug,
-        content,
-        readingTime: estimateReadingTime(content),
-      } satisfies Post;
-    })
-    .filter((post) => !post.draft || process.env.NODE_ENV === "development");
-
-  return posts.sort((a, b) => b.date.localeCompare(a.date));
+    .map(readPost)
+    .filter((post) => !post.draft || process.env.NODE_ENV === "development")
+    .sort((a, b) => b.date.localeCompare(a.date));
 }
 
-export function getPostBySlug(slug: string): Post | null {
-  return getAllPosts().find((post) => post.slug === slug) ?? null;
-}
-
-export function getAllPostSlugs(): string[] {
-  return getAllPosts().map((post) => post.slug);
-}
-
-export function getPostTags(): string[] {
-  return Array.from(new Set(getAllPosts().flatMap((post) => post.tags))).sort(
-    (a, b) => a.localeCompare(b),
-  );
+export function getPostBySlug(slug: string): Post | undefined {
+  return getAllPosts().find((post) => post.slug === slug);
 }

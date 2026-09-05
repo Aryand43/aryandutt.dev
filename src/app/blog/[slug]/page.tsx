@@ -1,26 +1,19 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft } from "lucide-react";
+import { Link } from "next-view-transitions";
 
-import { MdxContent } from "@/components/mdx-content";
-import { Reveal } from "@/components/motion/reveal";
-import { Badge } from "@/components/ui/badge";
-import { getAllPostSlugs, getPostBySlug } from "@/lib/blog";
+import { Mdx } from "@/components/mdx";
+import { getAllPosts, getPostBySlug } from "@/lib/blog";
 import { siteConfig } from "@/lib/site";
 import { formatDate } from "@/lib/utils";
 
-type PageProps = {
-  params: Promise<{ slug: string }>;
-};
+type PageProps = { params: Promise<{ slug: string }> };
 
 export function generateStaticParams() {
-  return getAllPostSlugs().map((slug) => ({ slug }));
+  return getAllPosts().map((post) => ({ slug: post.slug }));
 }
 
-export async function generateMetadata({
-  params,
-}: PageProps): Promise<Metadata> {
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
   const post = getPostBySlug(slug);
 
@@ -53,53 +46,37 @@ export default async function PostPage({ params }: PageProps) {
   if (!post) notFound();
 
   return (
-    <div className="container max-w-3xl pb-24">
-      <div className="py-10">
+    <div className="mx-auto max-w-2xl px-6 pb-24">
+      <div className="pt-12 pb-10">
         <Link
           href="/blog"
-          className="inline-flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-primary"
+          className="font-mono text-xs text-subtle transition-colors hover:text-accent"
         >
-          <ArrowLeft className="size-3.5" />
-          All posts
+          Back to blog
         </Link>
       </div>
 
-      <Reveal as="article">
-        <header className="border-b border-border/70 pb-8">
-          <div className="flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-xs text-muted-foreground">
-            <time dateTime={post.date}>{formatDate(post.date)}</time>
-            <span aria-hidden>·</span>
-            <span>{post.readingTime} min read</span>
-          </div>
-
-          <h1 className="mt-4 text-balance text-3xl font-semibold leading-tight tracking-tight sm:text-4xl">
-            {post.title}
-          </h1>
-
-          <p className="mt-4 text-pretty text-lg leading-relaxed text-muted-foreground">
+      <article className="animate-rise">
+        <header className="border-b border-line/80 pb-8">
+          <h1 className="text-title text-balance font-medium">{post.title}</h1>
+          <p className="mt-4 text-pretty text-lead leading-relaxed text-muted">
             {post.description}
           </p>
-
-          <div className="mt-6 flex flex-wrap gap-1.5">
-            {post.tags.map((tag) => (
-              <Badge key={tag} variant="secondary" className="font-normal">
-                {tag}
-              </Badge>
-            ))}
+          <div className="mt-6 flex flex-wrap gap-x-4 font-mono text-xs text-subtle">
+            <time dateTime={post.date}>{formatDate(post.date)}</time>
+            <span>{post.readingTime} min read</span>
           </div>
         </header>
 
-        <div className="pt-4">
-          <MdxContent source={post.content} />
-        </div>
-      </Reveal>
+        <Mdx source={post.content} />
+      </article>
 
-      <footer className="mt-16 border-t border-border/70 pt-8">
-        <p className="text-sm text-muted-foreground">
-          Written by {siteConfig.name}. Questions or corrections —{" "}
+      <footer className="mt-16 border-t border-line/80 pt-8">
+        <p className="text-sm text-subtle">
+          Written by {siteConfig.name}. Questions or corrections:{" "}
           <a
             href={`mailto:${siteConfig.email}`}
-            className="text-primary underline underline-offset-4"
+            className="text-muted transition-colors hover:text-accent"
           >
             email me
           </a>
