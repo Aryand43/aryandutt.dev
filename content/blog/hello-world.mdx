@@ -1,0 +1,87 @@
+---
+title: "Why I keep ending up between solvers and models"
+description: "Scientific machine learning, LLM safety, and low-latency databases look like three unrelated fields. Working across them, they rhyme more than they differ."
+date: "2026-08-14"
+tags: ["Scientific ML", "Julia", "LLM Safety", "Research"]
+draft: false
+---
+
+Three of the places I've worked look, on paper, like they have nothing to do with
+each other. The MIT Julia Lab is a numerical computing group. NTU CCDS is a
+machine learning research college. InterSystems builds real-time databases.
+
+Having now spent time in all three, the surprise is how much the same instinct
+carries across them: **be precise about what you are actually measuring, and be
+honest about the error you are carrying.**
+
+## Solvers force you to be honest
+
+Scientific machine learning lives in the gap between two traditions. Numerical
+analysts have spent decades quantifying exactly how wrong a differential equation
+solver is at each step. Machine learning, by comparison, grew up measuring
+performance almost entirely by held-out loss.
+
+Put them in the same system and the numerical tradition wins the argument, because
+an unstable solver produces garbage loudly:
+
+```julia
+using OrdinaryDiffEq
+
+# A stiff system: the explicit method will crawl or blow up.
+function rober!(du, u, p, t)
+    y₁, y₂, y₃ = u
+    k₁, k₂, k₃ = p
+    du[1] = -k₁ * y₁ + k₃ * y₂ * y₃
+    du[2] =  k₁ * y₁ - k₂ * y₂^2 - k₃ * y₂ * y₃
+    du[3] =  k₂ * y₂^2
+    return nothing
+end
+
+prob = ODEProblem(rober!, [1.0, 0.0, 0.0], (0.0, 1e5), (0.04, 3e7, 1e4))
+sol  = solve(prob, Rodas5P(), abstol = 1e-8, reltol = 1e-8)
+```
+
+Swap `Rodas5P()` for a non-stiff explicit method and it doesn't quietly get
+worse — it stops being usable. That failure mode is a gift. You cannot ship a
+result you don't understand, because the solver won't let you.
+
+## Alignment research has the opposite problem
+
+LLM safety work is where I noticed the contrast most sharply. A misaligned model
+does not throw. It answers fluently, confidently, and wrongly — and the fluency
+is precisely what makes the failure hard to catch.
+
+So the work becomes evaluation design. Some things I came away believing:
+
+- **Aggregate refusal rates hide almost everything.** Two interventions with the
+  same headline number can fail on completely disjoint prompt families.
+- **Group failures before you count them.** The interesting unit is the family of
+  prompts a model fails on, not the individual prompt.
+- **A benchmark you cannot regenerate is a benchmark you cannot trust.** If the
+  harness isn't reproducible, neither is the claim.
+
+None of that is exotic. It's the numerical analyst's instinct — quantify the
+error, don't just report the mean — pointed at a system that doesn't come with
+error bars built in.
+
+## Latency is the same discipline with a stopwatch
+
+Real-time database work adds a third framing: the correct answer, delivered late,
+is the wrong answer. Tail latency behaves like numerical error. The average tells
+you nothing useful, and the distribution's tail is where all the actual
+information lives.
+
+| Field | Failure signal | What it costs to ignore |
+| --- | --- | --- |
+| SciML | Solver diverges | Wrong physics, loudly |
+| LLM safety | Fluent bad answer | Wrong answer, quietly |
+| Real-time data | p99 blows out | Right answer, too late |
+
+The middle row is the dangerous one, and it's why alignment evaluation needs the
+most deliberate instrumentation of the three.
+
+## What I'm working on next
+
+More of the same seam: evaluation tooling that treats model behaviour with the
+seriousness numerical software already takes for granted. If you work on any of
+this, I'd genuinely like to hear from you.

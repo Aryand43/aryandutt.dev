@@ -1,0 +1,76 @@
+---
+title: "Notes on shipping anomaly detection people actually use"
+description: "An Isolation Forest is the easy part. Getting analysts to trust and act on what it flags is the work."
+date: "2026-06-02"
+tags: ["Anomaly Detection", "scikit-learn", "Streamlit", "FinTech"]
+draft: false
+---
+
+At Tagit I built transaction anomaly detection for digital banking. The modelling
+took a fraction of the time. Nearly everything else went into the question that
+actually decides whether such a system survives contact with users: *when this
+flags something, what is a human supposed to do about it?*
+
+## The model is a starting point, not the product
+
+Isolation Forest is a good default for this shape of problem. It's unsupervised,
+which matters when you have no reliable fraud labels, and it scales fine:
+
+```python
+from sklearn.ensemble import IsolationForest
+
+model = IsolationForest(
+    n_estimators=200,
+    contamination=0.01,   # a stated prior, not a discovered truth
+    random_state=42,
+)
+model.fit(features)
+
+scores = model.score_samples(features)  # lower = more anomalous
+```
+
+That `contamination` parameter deserves suspicion. It is not learned from the
+data — it's your assumption about how much of the world is anomalous, and it
+directly sets the threshold. Choosing 0.01 because it's the default means you've
+made a business decision by accident.
+
+## Features carry the domain knowledge
+
+The model has no idea that a $4,000 transfer at 3am differs from a $4,000 transfer
+on payday. Raw columns can't tell it. Derived ones can:
+
+- Amount as a **z-score against that account's own history**, not the global pool.
+- Time-of-day encoded cyclically, so 23:00 and 01:00 are near neighbours.
+- Velocity: transactions in the trailing hour, day, week.
+- Whether the counterparty has ever been seen on this account before.
+
+Every one of these is a hypothesis about what "unusual" means here. The model
+ranks them; it doesn't invent them.
+
+## The dashboard is where trust is won
+
+The last piece was a Streamlit dashboard, and it changed the system's reception
+more than any modelling decision did. Before it, output was a scored CSV — which
+is another way of saying nobody looked at it.
+
+What made the difference:
+
+1. **Rank, don't threshold.** Analysts work a queue top-down. A hard binary
+   cut-off just hides the ordering they need.
+2. **Show the neighbours.** A flagged transaction next to that account's normal
+   behaviour is legible. The same transaction alone is noise.
+3. **Make disagreement cheap.** A one-click "not anomalous" gives you the labels
+   you didn't have at the start.
+
+> A detector nobody acts on has a real-world precision of zero, whatever the
+> offline metrics say.
+
+That third point is the compounding one. You begin fully unsupervised because you
+must, and every dismissal an analyst logs moves you closer to being able to
+evaluate the thing properly.
+
+## What I'd do differently
+
+I'd build the review interface first — before tuning a single hyperparameter.
+The interface is what tells you which errors are actually expensive, and that is
+the only thing that should be steering the model.
