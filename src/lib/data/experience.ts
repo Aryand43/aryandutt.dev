@@ -29,7 +29,7 @@ export const experience: Experience[] = [
     summary:
       "Recalled to SC3DP as an Undergraduate Research Assistant with Prof. Paulo Bartolo.",
     impact:
-      "Recalled to SC3DP to continue additive manufacturing research under Prof. Paulo Bartolo.",
+      "Returned to SC3DP to extend the additive manufacturing research, building the analysis tooling that shortened the loop between a print run and a usable result.",
     highlights: [
       "Continued SC3DP research on additive manufacturing process data.",
       "Built analysis tooling to shorten the loop between print run and result.",
@@ -46,7 +46,7 @@ export const experience: Experience[] = [
     kind: "engineering",
     summary: "Low latency data platforms and real time database internals.",
     impact:
-      "Engineered low-latency data platform work backing real-time database workloads.",
+      "Engineered low-latency platform work behind real-time database workloads, building across the ObjectScript stack with CMake and Ansible so environments stayed reproducible.",
     highlights: [
       "Contributed to low latency platform work backing real time database workloads.",
       "Worked across the ObjectScript stack with CMake builds and Ansible managed environments.",
@@ -65,7 +65,7 @@ export const experience: Experience[] = [
     summary:
       "LLM safety alignment research with Prof. Anupam Chattopadhyay at the College of Computing and Data Science.",
     impact:
-      "Co-authored a paper on LLM safety alignment and built the evaluation harness behind it.",
+      "Co-authored a paper on LLM safety alignment, building the evaluation harness that grouped failures into prompt families so the results said something the headline refusal rate could not.",
     highlights: [
       "Co-authored a paper on LLM safety alignment.",
       "Ran evaluation harnesses over alignment interventions and analysed failure modes across prompt families.",
@@ -83,7 +83,7 @@ export const experience: Experience[] = [
     kind: "research",
     summary: "Scientific machine learning research under PI Dr. Chris Rackauckas.",
     impact:
-      "Scientific machine learning research in the Julia Lab under PI Dr. Chris Rackauckas.",
+      "Researched scientific machine learning in the Julia Lab under Dr. Chris Rackauckas, working where numerical solvers and learned models have to agree with each other.",
     highlights: [
       "Research intern in the Julia Lab under PI Dr. Chris Rackauckas.",
       "Worked in the scientific machine learning ecosystem around differential equation solvers and Julia numerics.",
@@ -101,7 +101,7 @@ export const experience: Experience[] = [
     kind: "research",
     summary: "Singapore Centre for 3D Printing, under Prof. Paulo Bartolo.",
     impact:
-      "Supported additive manufacturing research through experimental data capture and analysis.",
+      "Supported additive manufacturing research by handling experimental data capture and analysis across print runs, turning raw process output into something the team could reason about.",
     highlights: [
       "Supported additive manufacturing research under Prof. Paulo Bartolo.",
       "Handled experimental data capture and analysis across print runs.",
@@ -119,7 +119,7 @@ export const experience: Experience[] = [
     summary:
       "SEAQR, now SeaSwarm, is a robotics startup founded by Harvard University researchers building autonomous marine sensing and monitoring systems.",
     impact:
-      "Built software for autonomous marine sensing at a Harvard-founded robotics startup.",
+      "Built the software path carrying data off autonomous marine sensing hardware into the analysis tooling that made it useful, at a robotics startup founded by Harvard researchers.",
     highlights: [
       "Built software for autonomous marine sensing.",
       "Worked on the data path between fleet hardware and the analysis tooling consuming it.",
@@ -136,9 +136,9 @@ export const experience: Experience[] = [
     kind: "engineering",
     summary: "Transaction anomaly detection for digital banking products.",
     impact:
-      "Architected a modular transaction anomaly detection system for digital banking workloads.",
+      "Architected a modular transaction anomaly detection system for digital banking, modelling outliers with per-user Isolation Forests and shipping the dashboard that let analysts act on what it flagged.",
     highlights: [
-      "Architected a modular transaction anomaly detection system for digital banking workloads.",
+      "Architected a modular transaction anomaly detection system for digital banking, modelling outliers with per-user Isolation Forests and shipping the dashboard that let analysts act on what it flagged.",
       "Implemented per user Isolation Forest modelling and percentile based spike detection.",
       "Engineered rolling 7 day and 30 day behavioural features, merchant spend ratios, and temporal risk signals.",
       "Built a production ready Streamlit monitoring dashboard with exportable analytics and audit summaries.",
@@ -156,7 +156,7 @@ export const experience: Experience[] = [
     kind: "engineering",
     summary: "Bioreactor telemetry and internal operations tooling for a biotech venture.",
     impact:
-      "Instrumented bioreactor telemetry and shipped the internal operations tooling around it.",
+      "Instrumented bioreactor telemetry on Arduino Cloud and built the Digital Board around it, so reactor state became visible to the whole team rather than to whoever was standing next to it.",
     highlights: [
       "Architected Arduino Cloud bioreactor telemetry with real time control integration.",
       "Built the internal Digital Board system for workflow coordination and data visibility.",
@@ -175,7 +175,7 @@ export const experience: Experience[] = [
     kind: "engineering",
     summary: "Curriculum data infrastructure at a Y Combinator F24 education startup.",
     impact:
-      "Built the Node.js scraping and taxonomy infrastructure behind curriculum data.",
+      "Built the Node.js scraping and taxonomy infrastructure behind A Level and GMAT curriculum data, normalising scraped syllabi into a hierarchy the backend could actually query.",
     highlights: [
       "Built Node.js scraping infrastructure with Axios and Cheerio, structuring A Level and GMAT curricula into production ready JSON.",
       "Designed slug generation and taxonomy pipelines for automated curriculum normalisation at scale.",
@@ -195,7 +195,7 @@ export const experience: Experience[] = [
     summary:
       "Two years of National Service in ProCom, on critical infrastructure protection.",
     impact:
-      "Served under the Protective Security Command on critical infrastructure protection.",
+      "Served two years under the Protective Security Command on critical infrastructure protection, in an environment where operational discipline was the whole job.",
     highlights: [
       "Served under the Protective Security Command (ProCom).",
       "Supported high readiness security and critical infrastructure protection.",

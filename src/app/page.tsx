@@ -1,5 +1,7 @@
 import { ArrowRight, FileText, Mail } from "lucide-react";
 
+import { Globe } from "@/components/globe";
+
 import { ProjectCard } from "@/components/project-card";
 import { SectionHeader } from "@/components/section-header";
 import { SignalPanel } from "@/components/signal-panel";
@@ -31,46 +33,79 @@ export default function HomePage() {
   return (
     <div className="mx-auto max-w-5xl px-6">
       {/* ---------------------------------------------- Hero */}
-      <section className="relative pt-20 pb-16 sm:pt-28">
+      <section className="relative pt-16 pb-14 sm:pt-20">
         <div
           aria-hidden
           className="grid-field pointer-events-none absolute inset-x-0 -top-24 -z-10 h-[32rem] [mask-image:radial-gradient(70%_55%_at_35%_0%,black,transparent)]"
         />
 
-        <h1 className="animate-rise max-w-3xl text-balance text-hero font-medium">
-          {siteConfig.statement}
-        </h1>
+        <div className="grid items-center gap-12 lg:grid-cols-[minmax(0,1fr)_22rem] lg:gap-10">
+          {/* Copy sits in its own column so the globe never crowds it. */}
+          <div className="relative z-10">
+            <h1 className="animate-rise max-w-2xl text-balance text-hero font-medium">
+              {siteConfig.statement}
+            </h1>
 
-        <p
-          className="animate-rise mt-7 max-w-xl text-pretty text-lead text-ink-muted"
-          style={{ animationDelay: "70ms" }}
-        >
-          {siteConfig.summary}
-        </p>
+            <p
+              className="animate-rise mt-7 max-w-xl text-pretty text-lead text-ink-muted"
+              style={{ animationDelay: "70ms" }}
+            >
+              {siteConfig.summary}
+            </p>
 
-        <div
-          className="animate-rise mt-9 flex flex-wrap gap-2.5"
-          style={{ animationDelay: "130ms" }}
-        >
-          <ButtonLink href="/work" variant="primary">
-            View selected work
-            <ArrowRight aria-hidden />
-          </ButtonLink>
-          <ButtonLink href="/research">Read the research notes</ButtonLink>
-          <ButtonLink href="/resume">
-            <FileText aria-hidden />
-            Résumé
-          </ButtonLink>
-          <ButtonLink href={`mailto:${siteConfig.email}`} variant="ghost">
-            <Mail aria-hidden />
-            Contact
-          </ButtonLink>
+            <p
+              className="animate-rise mt-4 max-w-xl text-pretty leading-relaxed text-ink-faint"
+              style={{ animationDelay: "110ms" }}
+            >
+              {siteConfig.thesis}
+            </p>
+
+            <div
+              className="animate-rise mt-9 flex flex-wrap gap-2.5"
+              style={{ animationDelay: "160ms" }}
+            >
+              <ButtonLink href="/work" variant="primary">
+                View selected work
+                <ArrowRight aria-hidden />
+              </ButtonLink>
+              <ButtonLink href="/research">Read the research notes</ButtonLink>
+              <ButtonLink href="/resume">
+                <FileText aria-hidden />
+                Résumé
+              </ButtonLink>
+              <ButtonLink href={`mailto:${siteConfig.email}`} variant="ghost">
+                <Mail aria-hidden />
+                Contact
+              </ButtonLink>
+            </div>
+          </div>
+
+          {/* Globe. Decorative framing, informative content, never a blocker. */}
+          <div
+            className="animate-fade relative mx-auto w-full max-w-sm lg:max-w-none"
+            style={{ animationDelay: "240ms" }}
+          >
+            <Globe />
+            <div className="mt-4 flex flex-wrap items-center justify-center gap-x-5 gap-y-1 lg:justify-start">
+              <span className="label flex items-center gap-2">
+                <span aria-hidden className="h-px w-5 bg-accent" />
+                On-site and hybrid
+              </span>
+              <span className="label flex items-center gap-2">
+                <span
+                  aria-hidden
+                  className="h-px w-5 bg-[repeating-linear-gradient(90deg,var(--color-accent)_0_3px,transparent_3px_6px)]"
+                />
+                Remote
+              </span>
+            </div>
+          </div>
         </div>
 
         {/* Credibility strip. Every entry is supported by the record. */}
         <div
           className="animate-fade mt-14 border-t border-line-soft pt-5"
-          style={{ animationDelay: "220ms" }}
+          style={{ animationDelay: "300ms" }}
         >
           <h2 className="sr-only">Affiliations</h2>
           <ul className="flex flex-wrap items-center gap-x-7 gap-y-2">
@@ -190,7 +225,9 @@ export default function HomePage() {
           </p>
           <p className="mt-5 max-w-xl text-pretty leading-relaxed text-ink-muted">
             I&apos;m interested in research, systems, and quantitative
-            engineering problems where correctness and performance both matter.
+            engineering problems where correctness and performance both matter,
+            and where the answer has to hold up under load rather than only in
+            the notebook.
           </p>
           <div className="mt-8 flex flex-wrap gap-2.5">
             <ButtonLink href={`mailto:${siteConfig.email}`} variant="primary">

@@ -59,7 +59,7 @@ dependencies and no API routes, so the whole site can be served from a CDN.
 
 ### Client JavaScript
 
-Five components opt into the client, and nothing else does:
+Six components opt into the client, and nothing else does:
 
 | Component | Why it needs the client |
 | --- | --- |
@@ -68,11 +68,12 @@ Five components opt into the client, and nothing else does:
 | `project-filter` | Category filtering on `/work` |
 | `copy-email` | Clipboard write on `/contact` |
 | `scroll-progress` | Fallback only, where CSS scroll-driven animations are unsupported |
+| `globe` | Capability detection, hover tooltip, and the lazily loaded WebGL scene |
 
 The palette is loaded with `next/dynamic`, so its code (roughly 1.6 KB gzipped)
 downloads only when someone opens it. Everything above the fold is server
-rendered. Adding all of this cost about 3 KB gzipped over the fully static
-version it replaced.
+rendered. Adding all of this, the globe included, cost about 5 KB gzipped over the fully
+static version it replaced; Three.js itself is lazy and excluded from that.
 
 ### Motion
 
@@ -146,6 +147,74 @@ build time by Shiki, so no highlighting JavaScript reaches the browser.
 `siteConfig.resume.available` is `false`, so `/resume` renders a placeholder with
 a request-a-copy action instead of a broken download. To enable the real thing,
 add `public/aryan-dutt-resume.pdf` and set `available: true`.
+
+---
+
+## The globe
+
+The homepage hero carries an interactive 3D visualisation of where the work has
+happened: Singapore as home base, with arcs out to Cambridge, Massachusetts and
+London. It is meant to read as an engineering dashboard, not decoration, so
+there are no country borders, no labels on the sphere, and no colour beyond the
+site accent.
+
+### Files
+
+| File | Role |
+| --- | --- |
+| `src/lib/data/locations.ts` | Cities, roles per city, and the connections between them |
+| `src/components/globe/projection.ts` | Pure lat/long maths, **no Three.js import** |
+| `src/components/globe/geo.ts` | Three.js vectors, great-circle arcs, Fibonacci point sphere |
+| `src/components/globe/globe-scene.tsx` | The WebGL scene (client only, lazily imported) |
+| `src/components/globe/globe-fallback.tsx` | Static SVG projection of the same data |
+| `src/components/globe/index.tsx` | Capability detection, tooltip, accessible text |
+
+### How it degrades
+
+Three tiers, decided once after first paint so nothing blocks the hero:
+
+1. **Full 3D** on desktop with WebGL and more than four CPU cores.
+2. **Static SVG** on viewports under 900px, on devices reporting four cores or
+   fewer, and wherever WebGL is unavailable. This is a real projection of the
+   same data, not a placeholder image, so the information survives.
+3. **Text** in the `sr-only` block: every city and every role, always present in
+   the server HTML. Hover is an enhancement, never the only route to content.
+
+Under `prefers-reduced-motion: reduce` the 3D scene still renders but nothing
+moves: no auto-rotation, no node pulsing, no travelling dots.
+
+### Performance
+
+Three.js never enters the initial bundle. The scene is behind
+`next/dynamic` with `ssr: false`, so the homepage ships **178 KB gzipped**,
+about 2 KB more than before the globe existed, and the ~238 KB WebGL chunk
+downloads only when the full tier is selected.
+
+This is why `projection.ts` exists separately from `geo.ts`. The SVG fallback
+loads everywhere, and when it imported the Three-dependent module the initial
+payload jumped to 276 KB. Keeping the shared maths Three-free brought it back.
+**If you add a helper used by the fallback, put it in `projection.ts`.**
+
+Other measures: `dpr` capped at 2, geometry and point positions built inside
+`useMemo`, per-frame work done through refs rather than state, and pulses
+sharing one curve instance per arc.
+
+### Tuning
+
+| What | Where |
+| --- | --- |
+| Node positions | `coordinates: [longitude, latitude]` in `locations.ts` |
+| Line style | `style` on a connection: `solid`, `dashed`, or `mixed` (draws both) |
+| Dash spacing | `dashSize` / `gapSize` on the dashed `<Line>` in `globe-scene.tsx` |
+| Rotation speed | `delta * 0.055` in the `Globe` component's `useFrame` |
+| Pulse speed | `clock.elapsedTime * 0.12` in `Pulse` |
+| Arc height | `lift` in `buildArc` (`geo.ts`) |
+| Point density | `POINT_COUNT` in `globe-scene.tsx` |
+| Colours | The `COLOR` map in `globe-scene.tsx`, which mirrors the CSS tokens |
+
+Adding a city means adding it to `locations`, then adding a connection
+referencing its id. Both the 3D scene and the SVG fallback read the same arrays,
+so neither needs editing.
 
 ---
 
