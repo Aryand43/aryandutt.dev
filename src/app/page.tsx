@@ -40,35 +40,29 @@ export default function HomePage() {
         />
 
         <div className="grid items-center gap-12 lg:grid-cols-[minmax(0,1fr)_22rem] lg:gap-10">
-          {/* Copy sits in its own column so the globe never crowds it. */}
+          {/* Copy column. Deliberately sparse: name, one sentence, three actions. */}
           <div className="relative z-10">
-            <h1 className="animate-rise max-w-2xl text-balance text-hero font-medium">
-              {siteConfig.statement}
+            <p className="label animate-fade">{siteConfig.role}</p>
+
+            <h1 className="animate-rise mt-4 text-balance text-hero font-medium">
+              {siteConfig.name}
             </h1>
 
             <p
-              className="animate-rise mt-7 max-w-xl text-pretty text-lead text-ink-muted"
+              className="animate-rise mt-6 max-w-lg text-pretty text-lead text-ink-muted"
               style={{ animationDelay: "70ms" }}
             >
               {siteConfig.summary}
             </p>
 
-            <p
-              className="animate-rise mt-4 max-w-xl text-pretty leading-relaxed text-ink-faint"
-              style={{ animationDelay: "110ms" }}
-            >
-              {siteConfig.thesis}
-            </p>
-
             <div
               className="animate-rise mt-9 flex flex-wrap gap-2.5"
-              style={{ animationDelay: "160ms" }}
+              style={{ animationDelay: "130ms" }}
             >
               <ButtonLink href="/work" variant="primary">
-                View selected work
+                Selected work
                 <ArrowRight aria-hidden />
               </ButtonLink>
-              <ButtonLink href="/research">Read the research notes</ButtonLink>
               <ButtonLink href="/resume">
                 <FileText aria-hidden />
                 Résumé

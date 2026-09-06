@@ -43,21 +43,3 @@ export function buildArc(
 
   return points;
 }
-
-/** Evenly distributed points on a sphere via the Fibonacci lattice. */
-export function fibonacciSphere(count: number, radius = GLOBE_RADIUS): Float32Array {
-  const positions = new Float32Array(count * 3);
-  const golden = Math.PI * (3 - Math.sqrt(5));
-
-  for (let i = 0; i < count; i += 1) {
-    const y = 1 - (i / (count - 1)) * 2;
-    const ring = Math.sqrt(Math.max(0, 1 - y * y));
-    const theta = golden * i;
-
-    positions[i * 3] = Math.cos(theta) * ring * radius;
-    positions[i * 3 + 1] = y * radius;
-    positions[i * 3 + 2] = Math.sin(theta) * ring * radius;
-  }
-
-  return positions;
-}

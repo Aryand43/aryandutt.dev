@@ -11,19 +11,21 @@ import {
   locations,
   type GlobeLocation,
 } from "@/lib/data/locations";
-import { GLOBE_RADIUS, buildArc, fibonacciSphere, latLngToVector3 } from "./geo";
+import { GLOBE_RADIUS, buildArc, latLngToVector3 } from "./geo";
+import { LAND_POINTS } from "./land-points";
 
 /* Palette mirrors the site tokens. Kept as literals because WebGL materials
    cannot read CSS custom properties. */
 const COLOR = {
-  base: "#16181c",
-  point: "#4a5058",
+  /** Ocean: a touch lighter than the page so the sphere reads as a body. */
+  ocean: "#1b2027",
+  /** Land dots: warm off-white, the brightest thing on the sphere. */
+  land: "#c8cdd4",
   graticule: "#2b2f36",
   accent: "#5cc8f0",
   node: "#a9e6fb",
 } as const;
 
-const POINT_COUNT = 2600;
 const ARC_SEGMENTS = 64;
 
 type SceneProps = {
@@ -37,29 +39,48 @@ type SceneProps = {
  *  interactive globe feel broken. */
 const PausedContext = React.createContext<React.RefObject<boolean> | null>(null);
 
-/** Uniform point shell. No borders, no landmasses, no labels. */
-function PointShell() {
-  const positions = React.useMemo(
-    () => fibonacciSphere(POINT_COUNT, GLOBE_RADIUS * 1.002),
-    [],
-  );
-
+/**
+ * Continents, drawn as a dot matrix.
+ *
+ * Positions are precomputed at build time (see scripts/generate-land-points.mjs)
+ * and shipped as quantised integers, so the browser only converts degrees to
+ * vectors once. No texture is fetched and no political borders are drawn: the
+ * landmass silhouette alone carries the recognition.
+ */
+function LandPoints() {
   const geometry = React.useMemo(() => {
+    const count = LAND_POINTS.length / 2;
+    const positions = new Float32Array(count * 3);
+    const radius = GLOBE_RADIUS * 1.003;
+
+    for (let i = 0; i < count; i += 1) {
+      const longitude = LAND_POINTS[i * 2]! / 100;
+      const latitude = LAND_POINTS[i * 2 + 1]! / 100;
+
+      const phi = (90 - latitude) * (Math.PI / 180);
+      const theta = (longitude + 180) * (Math.PI / 180);
+      const sinPhi = Math.sin(phi);
+
+      positions[i * 3] = -radius * sinPhi * Math.cos(theta);
+      positions[i * 3 + 1] = radius * Math.cos(phi);
+      positions[i * 3 + 2] = radius * sinPhi * Math.sin(theta);
+    }
+
     const geo = new THREE.BufferGeometry();
     geo.setAttribute("position", new THREE.BufferAttribute(positions, 3));
     return geo;
-  }, [positions]);
+  }, []);
 
   React.useEffect(() => () => geometry.dispose(), [geometry]);
 
   return (
     <points geometry={geometry}>
       <pointsMaterial
-        size={0.011}
-        color={COLOR.point}
+        size={0.0092}
+        color={COLOR.land}
         sizeAttenuation
         transparent
-        opacity={0.85}
+        opacity={0.92}
         depthWrite={false}
       />
     </points>
@@ -67,15 +88,40 @@ function PointShell() {
 }
 
 /**
- * Opaque inner sphere in the page background colour. It contributes no visible
- * surface of its own but writes depth, which is what hides the points and arcs
- * on the far side of the globe.
+ * Rim light. A slightly larger sphere rendered from the inside with additive
+ * blending, so the accent only accumulates where the surface turns away from
+ * the camera. That gives the soft edge glow without a custom shader.
  */
-function Occluder() {
+function Atmosphere() {
   return (
     <mesh>
-      <sphereGeometry args={[GLOBE_RADIUS * 0.985, 48, 48]} />
-      <meshBasicMaterial color={COLOR.base} />
+      <sphereGeometry args={[GLOBE_RADIUS * 1.055, 64, 64]} />
+      <meshBasicMaterial
+        color={COLOR.accent}
+        side={THREE.BackSide}
+        transparent
+        opacity={0.085}
+        blending={THREE.AdditiveBlending}
+        depthWrite={false}
+      />
+    </mesh>
+  );
+}
+
+/**
+ * The ocean sphere. Still writes depth, so points and arcs on the far side stay
+ * hidden, but it is now lit rather than flat: a single directional light gives
+ * the terminator that makes the shape read as a globe instead of a disc.
+ */
+function Ocean() {
+  return (
+    <mesh>
+      <sphereGeometry args={[GLOBE_RADIUS * 0.997, 64, 64]} />
+      <meshStandardMaterial
+        color={COLOR.ocean}
+        roughness={0.92}
+        metalness={0.05}
+      />
     </mesh>
   );
 }
@@ -108,7 +154,7 @@ function Graticule() {
             color={COLOR.graticule}
             side={THREE.DoubleSide}
             transparent
-            opacity={0.55}
+            opacity={0.3}
           />
         </mesh>
       ))}
@@ -280,9 +326,10 @@ function Globe({ animate, onHover, activeId }: SceneProps) {
 
   return (
     <group ref={group} rotation={[0.32, -1.15, 0.12]}>
-      <Occluder />
-      <PointShell />
+      <Ocean />
+      <LandPoints />
       <Graticule />
+      <Atmosphere />
 
       {connections.map((connection) => (
         <Arc
@@ -334,7 +381,8 @@ export default function GlobeScene({
       gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}
       style={{ background: "transparent" }}
     >
-      <ambientLight intensity={0.6} />
+      <ambientLight intensity={0.85} />
+      <directionalLight position={[3, 2, 4]} intensity={1.5} />
       <PausedContext.Provider value={paused}>
         <Globe animate={animate} onHover={onHover} activeId={activeId} />
       </PausedContext.Provider>

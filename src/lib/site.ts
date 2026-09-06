@@ -4,12 +4,8 @@ export const siteConfig = {
   location: "Singapore",
   /** Rough coordinates, used as editorial metadata only. */
   coordinates: "1.3483° N, 103.6831° E",
-  statement: "I engineer systems for a world that does not stay local.",
   summary:
     "Data Science & AI undergraduate at NTU Singapore, working across low-latency infrastructure, scientific machine learning, LLM safety, and quantitative systems.",
-  /** Second paragraph of the hero: the thesis the globe illustrates. */
-  thesis:
-    "I build infrastructure and intelligent systems designed to operate reliably at scale, across three countries and ten roles so far.",
   description:
     "Aryan Dutt is a Data Science and AI undergraduate at NTU Singapore working across low-latency infrastructure, scientific machine learning, LLM safety evaluation, and quantitative systems.",
   url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://aryandutt.dev",

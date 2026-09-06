@@ -55,16 +55,19 @@ export function Globe() {
   );
 
   React.useEffect(() => {
-    // Defer the decision past first paint so nothing here blocks the hero.
-    const schedule =
-      typeof window.requestIdleCallback === "function"
-        ? window.requestIdleCallback
-        : (cb: () => void) => window.setTimeout(cb, 200);
+    // Defer past first paint so nothing here blocks the hero, but never wait
+    // indefinitely: idle callbacks do not fire in a backgrounded or throttled
+    // tab, which would leave the globe stuck on the fallback forever.
+    const useIdle = typeof window.requestIdleCallback === "function";
 
-    const handle = schedule(() => setCapability(detectCapability()));
+    const handle = useIdle
+      ? window.requestIdleCallback(() => setCapability(detectCapability()), {
+          timeout: 1200,
+        })
+      : window.setTimeout(() => setCapability(detectCapability()), 200);
 
     return () => {
-      if (typeof window.cancelIdleCallback === "function") {
+      if (useIdle) {
         window.cancelIdleCallback(handle as number);
       } else {
         window.clearTimeout(handle as number);

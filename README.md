@@ -155,8 +155,36 @@ add `public/aryan-dutt-resume.pdf` and set `available: true`.
 The homepage hero carries an interactive 3D visualisation of where the work has
 happened: Singapore as home base, with arcs out to Cambridge, Massachusetts and
 London. It is meant to read as an engineering dashboard, not decoration, so
-there are no country borders, no labels on the sphere, and no colour beyond the
-site accent.
+there are no political borders, no labels on the sphere, and no colour beyond
+the site accent.
+
+### How the continents are drawn
+
+No texture is fetched and no map image ships. Landmasses are a dot matrix:
+
+1. `scripts/generate-land-points.mjs` reads `world-atlas/land-110m` at build
+   time, samples 42,000 points on a Fibonacci lattice, and runs a
+   bounding-box-accelerated point-in-polygon test against every land ring.
+2. The 12,071 points that land on land are quantised to hundredths of a degree
+   and written to `land-points.ts` as an `Int16Array`.
+3. At runtime the scene converts those integers to sphere positions once inside
+   a `useMemo`, then draws them as a single `THREE.Points` cloud.
+
+The point-in-polygon work is far too slow for the browser, which is why it
+happens once at build time. `world-atlas` and `topojson-client` are
+**devDependencies**: they never reach the client.
+
+Legibility comes from three layers rather than colour. A lit `meshStandardMaterial`
+ocean sphere gives a soft terminator so the shape reads as a sphere, the land
+dots sit above it in warm off-white as the brightest thing on the globe, and a
+larger back-side sphere with additive blending supplies the rim glow. Latitude
+rings stay faint so they read as structure, not cartography.
+
+Regenerate after changing `SAMPLES` or swapping in `land-50m` for more detail:
+
+```bash
+npm run globe:land
+```
 
 ### Files
 
@@ -164,7 +192,9 @@ site accent.
 | --- | --- |
 | `src/lib/data/locations.ts` | Cities, roles per city, and the connections between them |
 | `src/components/globe/projection.ts` | Pure lat/long maths, **no Three.js import** |
-| `src/components/globe/geo.ts` | Three.js vectors, great-circle arcs, Fibonacci point sphere |
+| `src/components/globe/geo.ts` | Three.js vectors and great-circle arcs |
+| `src/components/globe/land-points.ts` | Generated. Continent dot positions, do not edit |
+| `scripts/generate-land-points.mjs` | Regenerates the above with `npm run globe:land` |
 | `src/components/globe/globe-scene.tsx` | The WebGL scene (client only, lazily imported) |
 | `src/components/globe/globe-fallback.tsx` | Static SVG projection of the same data |
 | `src/components/globe/index.tsx` | Capability detection, tooltip, accessible text |
@@ -176,7 +206,9 @@ Three tiers, decided once after first paint so nothing blocks the hero:
 1. **Full 3D** on desktop with WebGL and more than four CPU cores.
 2. **Static SVG** on viewports under 900px, on devices reporting four cores or
    fewer, and wherever WebGL is unavailable. This is a real projection of the
-   same data, not a placeholder image, so the information survives.
+   same nodes and arcs, not a placeholder image, so the information survives.
+   It deliberately omits the continents: pulling the land data into the initial
+   bundle would cost every visitor roughly 56 KB gzipped for a decorative gain.
 3. **Text** in the `sr-only` block: every city and every role, always present in
    the server HTML. Hover is an enhancement, never the only route to content.
 
@@ -185,10 +217,11 @@ moves: no auto-rotation, no node pulsing, no travelling dots.
 
 ### Performance
 
-Three.js never enters the initial bundle. The scene is behind
+Three.js and the land data never enter the initial bundle. The scene is behind
 `next/dynamic` with `ssr: false`, so the homepage ships **178 KB gzipped**,
-about 2 KB more than before the globe existed, and the ~238 KB WebGL chunk
-downloads only when the full tier is selected.
+about 3 KB more than before the globe existed. The globe chunk, which carries
+Three.js, the scene, and the continent data together, is roughly 294 KB gzipped
+and downloads only when the full tier is selected.
 
 This is why `projection.ts` exists separately from `geo.ts`. The SVG fallback
 loads everywhere, and when it imported the Three-dependent module the initial
@@ -209,7 +242,10 @@ sharing one curve instance per arc.
 | Rotation speed | `delta * 0.055` in the `Globe` component's `useFrame` |
 | Pulse speed | `clock.elapsedTime * 0.12` in `Pulse` |
 | Arc height | `lift` in `buildArc` (`geo.ts`) |
-| Point density | `POINT_COUNT` in `globe-scene.tsx` |
+| Land dot size | `size` on the `pointsMaterial` in `LandPoints` |
+| Land dot density | `SAMPLES` in `scripts/generate-land-points.mjs`, then rerun it |
+| Ocean and land colour | `COLOR.ocean` and `COLOR.land` in `globe-scene.tsx` |
+| Rim glow | `opacity` on the `Atmosphere` mesh |
 | Colours | The `COLOR` map in `globe-scene.tsx`, which mirrors the CSS tokens |
 
 Adding a city means adding it to `locations`, then adding a connection
