@@ -2,11 +2,18 @@ import { ImageResponse } from "next/og";
 
 import { siteConfig } from "@/lib/site";
 
-export const alt = `${siteConfig.name}, ${siteConfig.positioning}`;
+export const alt = `${siteConfig.name} — ${siteConfig.role}`;
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
-/** Social card, generated at build time to match the site's monochrome system. */
+const BASE = "#16181c";
+const INK = "#f5f4f1";
+const MUTED = "#a8adb5";
+const FAINT = "#767c86";
+const ACCENT = "#5cc8f0";
+const LINE = "#2b2f36";
+
+/** Social card, generated at build time to match the site's visual system. */
 export default function OpengraphImage() {
   return new ImageResponse(
     (
@@ -16,26 +23,67 @@ export default function OpengraphImage() {
           height: "100%",
           display: "flex",
           flexDirection: "column",
-          justifyContent: "space-between",
-          background: "#101114",
-          padding: "80px",
-          color: "#f7f7f8",
+          background: BASE,
+          color: INK,
           fontFamily: "sans-serif",
         }}
       >
-        <div style={{ display: "flex", fontSize: 28, color: "#8b8d94" }}>
-          {siteConfig.url.replace("https://", "")}
+        {/* Status strip */}
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 24,
+            borderBottom: `1px solid ${LINE}`,
+            padding: "24px 64px",
+            fontSize: 20,
+            letterSpacing: 2,
+            color: FAINT,
+          }}
+        >
+          <span>{`${siteConfig.name.toUpperCase()} / SINGAPORE`}</span>
+          <span style={{ marginLeft: "auto", color: ACCENT }}>
+            ● AVAILABLE
+          </span>
         </div>
-        <div style={{ display: "flex", flexDirection: "column" }}>
-          <div style={{ fontSize: 92, letterSpacing: "-0.035em" }}>
-            {siteConfig.name}
+
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            flex: 1,
+            padding: "0 64px",
+          }}
+        >
+          <div style={{ fontSize: 62, lineHeight: 1.1, letterSpacing: -2 }}>
+            I build reliable systems at the
           </div>
-          <div style={{ marginTop: 24, fontSize: 34, color: "#b4b6bd" }}>
-            {siteConfig.positioning}
+          <div style={{ fontSize: 62, lineHeight: 1.1, letterSpacing: -2 }}>
+            edge of research and performance.
+          </div>
+          <div style={{ display: "flex", marginTop: 32, fontSize: 26, color: MUTED }}>
+            {`${siteConfig.role} · Low-latency systems, scientific ML, LLM safety`}
           </div>
         </div>
-        <div style={{ display: "flex", fontSize: 26, color: "#8b8d94" }}>
-          Scientific ML, LLM safety, low latency systems
+
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 40,
+            borderTop: `1px solid ${LINE}`,
+            padding: "24px 64px",
+            fontSize: 20,
+            color: FAINT,
+          }}
+        >
+          <span>MIT JULIA LAB</span>
+          <span>INTERSYSTEMS</span>
+          <span>NTU CCDS</span>
+          <span style={{ marginLeft: "auto", color: MUTED }}>
+            {siteConfig.url.replace("https://", "")}
+          </span>
         </div>
       </div>
     ),

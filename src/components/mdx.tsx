@@ -21,11 +21,11 @@ const components = {
     <h3 className="mt-10 scroll-mt-24 text-base font-medium tracking-tight" {...props} />
   ),
   p: (props: ComponentPropsWithoutRef<"p">) => (
-    <p className="mt-5 text-pretty leading-[1.75] text-muted" {...props} />
+    <p className="mt-5 text-pretty leading-[1.75] text-ink-muted" {...props} />
   ),
   a: ({ href = "", ...props }: ComponentPropsWithoutRef<"a">) => {
     const className =
-      "text-foreground underline decoration-line underline-offset-4 transition-colors hover:decoration-accent";
+      "text-ink underline decoration-line-soft underline-offset-4 transition-colors hover:decoration-accent";
 
     return href.startsWith("/") || href.startsWith("#") ? (
       <Link href={href} className={className} {...props} />
@@ -40,32 +40,32 @@ const components = {
     );
   },
   ul: (props: ComponentPropsWithoutRef<"ul">) => (
-    <ul className="mt-5 list-disc space-y-2 pl-5 leading-relaxed text-muted marker:text-subtle" {...props} />
+    <ul className="mt-5 list-disc space-y-2 pl-5 leading-relaxed text-ink-muted marker:text-ink-faint" {...props} />
   ),
   ol: (props: ComponentPropsWithoutRef<"ol">) => (
-    <ol className="mt-5 list-decimal space-y-2 pl-5 leading-relaxed text-muted marker:text-subtle" {...props} />
+    <ol className="mt-5 list-decimal space-y-2 pl-5 leading-relaxed text-ink-muted marker:text-ink-faint" {...props} />
   ),
   blockquote: (props: ComponentPropsWithoutRef<"blockquote">) => (
-    <blockquote className="mt-6 border-l border-line pl-5 text-muted italic" {...props} />
+    <blockquote className="mt-6 border-l border-line-soft pl-5 text-ink-muted italic" {...props} />
   ),
   code: (props: ComponentPropsWithoutRef<"code">) => (
     <code
-      className="rounded border border-line bg-surface px-1.5 py-0.5 font-mono text-[0.85em] text-foreground"
+      className="rounded border border-line bg-surface px-1.5 py-0.5 font-mono text-[0.85em] text-ink"
       {...props}
     />
   ),
   pre: (props: ComponentPropsWithoutRef<"pre">) => <pre className="mt-6" {...props} />,
-  hr: (props: ComponentPropsWithoutRef<"hr">) => <hr className="my-12 border-line" {...props} />,
+  hr: (props: ComponentPropsWithoutRef<"hr">) => <hr className="my-12 border-line-soft" {...props} />,
   table: (props: ComponentPropsWithoutRef<"table">) => (
     <div className="mt-6 w-full overflow-x-auto">
       <table className="w-full border-collapse text-sm" {...props} />
     </div>
   ),
   th: (props: ComponentPropsWithoutRef<"th">) => (
-    <th className="border-b border-line px-3 py-2 text-left font-medium" {...props} />
+    <th className="border-b border-line-soft px-3 py-2 text-left font-medium" {...props} />
   ),
   td: (props: ComponentPropsWithoutRef<"td">) => (
-    <td className="border-b border-line/60 px-3 py-2 text-muted" {...props} />
+    <td className="border-b border-line-soft px-3 py-2 text-ink-muted" {...props} />
   ),
 };
 

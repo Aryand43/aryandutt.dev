@@ -1,19 +1,23 @@
-import { Link } from "next-view-transitions";
+import { ButtonLink } from "@/components/ui/button-link";
 
 export default function NotFound() {
   return (
-    <div className="mx-auto flex min-h-[60vh] max-w-3xl flex-col justify-center px-6">
-      <p className="font-mono text-xs tracking-widest text-subtle uppercase">404</p>
-      <h1 className="mt-4 text-title font-medium">This page does not exist.</h1>
-      <p className="mt-4 max-w-md text-pretty text-muted">
-        The link may be out of date, or the page may have moved.
+    <div className="mx-auto flex min-h-[60vh] max-w-5xl flex-col justify-center px-6 py-20">
+      <p className="label">404 / NOT FOUND</p>
+      <h1 className="mt-5 text-display font-medium">This page does not exist.</h1>
+      <p className="mt-5 max-w-md text-pretty leading-relaxed text-ink-muted">
+        The link may be out of date, or the page may have moved. Press{" "}
+        <kbd className="rounded border border-line px-1.5 py-0.5 font-mono text-xs">
+          ⌘K
+        </kbd>{" "}
+        to search the site.
       </p>
-      <Link
-        href="/"
-        className="mt-8 w-fit rounded-lg border border-line bg-surface px-4 py-2 text-sm transition-colors hover:border-accent/50"
-      >
-        Back home
-      </Link>
+      <div className="mt-8 flex flex-wrap gap-2.5">
+        <ButtonLink href="/" variant="primary">
+          Back home
+        </ButtonLink>
+        <ButtonLink href="/work">Selected work</ButtonLink>
+      </div>
     </div>
   );
 }

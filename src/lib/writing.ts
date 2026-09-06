@@ -4,7 +4,7 @@ import path from "node:path";
 import matter from "gray-matter";
 import { z } from "zod";
 
-const BLOG_DIR = path.join(process.cwd(), "content", "blog");
+const BLOG_DIR = path.join(process.cwd(), "content", "writing");
 
 /**
  * Frontmatter is validated at build time. A malformed post fails the build
@@ -44,7 +44,7 @@ function readPost(file: string): Post {
 
   if (!parsed.success) {
     throw new Error(
-      `Invalid frontmatter in content/blog/${file}:\n${z.prettifyError(parsed.error)}`,
+      `Invalid frontmatter in content/writing/${file}:\n${z.prettifyError(parsed.error)}`,
     );
   }
 
