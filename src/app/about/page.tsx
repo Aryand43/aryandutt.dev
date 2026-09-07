@@ -24,7 +24,6 @@ export default function AboutPage() {
       <PageIntro
         index="07"
         title="About"
-        description="I build systems where research and engineering meet: work that has to be correct, and work that has to be fast."
       />
 
       <Reveal>

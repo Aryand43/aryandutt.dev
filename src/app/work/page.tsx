@@ -17,7 +17,6 @@ export default function WorkPage() {
       <PageIntro
         index="01"
         title="Work"
-        description="Projects ordered by signal, not chronology. Each entry states the problem, the technical approach, and the outcome where one is documented."
       />
       <div className="mt-10">
         <ProjectFilter projects={projects} categories={projectCategories} />

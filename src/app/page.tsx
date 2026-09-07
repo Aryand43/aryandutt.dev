@@ -217,12 +217,6 @@ export default function HomePage() {
           <p className="max-w-2xl text-balance text-display font-medium">
             Building something difficult?
           </p>
-          <p className="mt-5 max-w-xl text-pretty leading-relaxed text-ink-muted">
-            I&apos;m interested in research, systems, and quantitative
-            engineering problems where correctness and performance both matter,
-            and where the answer has to hold up under load rather than only in
-            the notebook.
-          </p>
           <div className="mt-8 flex flex-wrap gap-2.5">
             <ButtonLink href={`mailto:${siteConfig.email}`} variant="primary">
               <Mail aria-hidden />

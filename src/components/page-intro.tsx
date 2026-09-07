@@ -6,7 +6,7 @@ export function PageIntro({
 }: {
   index: string;
   title: string;
-  description: string;
+  description?: string;
   children?: React.ReactNode;
 }) {
   return (
@@ -19,12 +19,14 @@ export function PageIntro({
       <h1 className="animate-rise mt-5 max-w-3xl text-balance text-display font-medium">
         {title}
       </h1>
-      <p
-        className="animate-rise mt-5 max-w-2xl text-pretty text-lead text-ink-muted"
-        style={{ animationDelay: "60ms" }}
-      >
-        {description}
-      </p>
+      {description ? (
+        <p
+          className="animate-rise mt-5 max-w-2xl text-pretty text-lead text-ink-muted"
+          style={{ animationDelay: "60ms" }}
+        >
+          {description}
+        </p>
+      ) : null}
       {children ? <div className="mt-8">{children}</div> : null}
     </header>
   );

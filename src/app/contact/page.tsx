@@ -18,7 +18,6 @@ export default function ContactPage() {
       <PageIntro
         index="05"
         title="Contact"
-        description="I'm interested in research, systems, and quantitative engineering problems where correctness and performance both matter."
       />
 
       <div className="mt-12 grid gap-px border border-line-soft bg-line-soft sm:grid-cols-2">
